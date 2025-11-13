@@ -1,0 +1,39 @@
+version: '3.9'
+services:
+api:
+build: .
+container_name: brs_api
+ports:
+- "3000:3000"
+env_file: .env
+depends_on:
+- rabbitmq
+- redis
+
+
+worker:
+build: .
+container_name: brs_worker
+command: ["node", "dist/worker.js"]
+env_file: .env
+depends_on:
+- rabbitmq
+- redis
+
+
+rabbitmq:
+image: rabbitmq:3-management
+container_name: brs_rabbitmq
+ports:
+- "5672:5672"
+- "15672:15672"
+environment:
+RABBITMQ_DEFAULT_USER: guest
+RABBITMQ_DEFAULT_PASS: guest
+
+
+redis:
+image: redis:7-alpine
+container_name: brs_redis
+ports:
+- "6379:6379"
