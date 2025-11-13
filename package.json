@@ -1,9 +1,12 @@
 {
   "name": "reports",
   "version": "1.0.0",
+  "types": "module",
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "tsx src/api/server.ts",
+    "dev": "tsx watch src/api/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -21,6 +24,8 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.10.1",
     "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   }
 }
