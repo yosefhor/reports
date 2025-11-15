@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import dotenv from 'dotenv';
 import reportRouter from './routes/report.js';
 import { getRedisClient } from './services/redis.js';
@@ -8,25 +8,39 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
-
 app.use('/reports', reportRouter);
 
-app.get('/health', async (_req: Request, res: Response) => {
-  try {
-    const redisClient = getRedisClient();
-    await redisClient.ping();
+const checkHealthy = async () => {
+    try {
+        const redis = await getRedisClient();
+        await redis.ping();
 
-    const channel = await getRabbitChannel();
-    await channel.assertQueue('report_queue');
+        const rabbit = await getRabbitChannel();
+        await rabbit.assertQueue('report_queue');
 
+        return true;
+    } catch (err) {
+        console.error("❌ Health check failed:", err);
+        return false;
+    }
+};
+
+app.get('/health', async (_req, res) => {
+    const healthy = await checkHealthy();
+    if (!healthy) return res.status(500).json({ status: 'error' });
     res.json({ status: 'ok' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ status: 'error', message: (err as Error).message });
-  }
 });
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`API server running on port ${port}`);
-});
+
+const runServer = async () => {
+    const healthy = await checkHealthy();
+    if (!healthy) {
+        console.error("❌ Cannot start server — Rabbit or Redis unavailable");
+        process.exit(1);
+    }
+
+    app.listen(port, () => console.log(`✔️ API running on port ${port}`));
+};
+
+runServer();
