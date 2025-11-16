@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>הרשמה</title>
+</head>
+<body>
+<h2>טופס הרשמה</h2>
+
+<form id="registerForm">
+    <label>שם משתמש:</label><br>
+    <input type="text" name="username" required /><br><br>
+    <label>סיסמה:</label><br>
+    <input type="password" name="password" required /><br><br>
+    <button type="submit">הרשם</button>
+</form>
+
+<p id="result"></p>
+
+<script>
+const form = document.getElementById('registerForm');
+const result = document.getElementById('result');
+
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    const data = {
+        username: formData.get('username'),
+        password: formData.get('password')
+    };
+
+    const res = await fetch('/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    });
+
+    const json = await res.json();
+    result.textContent = JSON.stringify(json);
+});
+</script>
+<a href="/">עבור לדף הבית</a><br>
+<a href="/login.html">עבור לדף הכניסה</a>
+</body>
+</html>

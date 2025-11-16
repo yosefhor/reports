@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { register, login, refreshToken } from "../utils/auth.js";
+import { register, login, refreshToken } from "../utils/authentication.js";
 
 const router = Router();
 
