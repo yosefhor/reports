@@ -6,7 +6,8 @@ services:
       - "3000:3000"
     env_file: .env
     depends_on:
-      - rabbitmq
+      - rabbitmq:
+          condition: service_healthy
       - redis
 
   worker:
@@ -15,15 +16,20 @@ services:
     command: node dist/worker.js
     env_file: .env
     depends_on:
-      - rabbitmq
+      - rabbitmq:
+        condition: service_healthy
       - redis
 
   rabbitmq:
     container_name: rabbitmq
-    image: rabbitmq:3-management
+    image: rabbitmq:3-alpine
     ports:
       - "5672:5672"
       - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 5s
+      retries: 10
 
   redis:
     container_name: redis

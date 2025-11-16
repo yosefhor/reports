@@ -3,5 +3,5 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install --omit=dev
 COPY . .
-RUN npm run build
+# RUN npm run build
 CMD ["node", "dist/worker.js"]
