@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <title>העלאת דו"ח</title>
+</head>
+<body>
+<h2>העלה קובץ TXT</h2>
+
+<form action="/reports/upload" method="POST" enctype="multipart/form-data">
+    <label>בחר קובץ:</label><br><br>
+    <input type="file" name="report" accept=".txt" required />
+    <br><br>
+    <button type="submit">שלח לעיבוד</button>
+</form>
+</body>
+</html>

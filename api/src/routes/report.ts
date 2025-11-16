@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import { getRabbitChannel } from '../services/rabbit.js';
 import { randomUUID } from 'crypto';
+import { requireAuth } from "../utils/auth.js";
 
 const router = Router();
 
-router.post('/', async (req, res) => {
+router.post('/', requireAuth, async (req, res) => {
     const { text } = req.body;
     if (!text) return res.status(400).json({ error: 'Missing report text' });
 
