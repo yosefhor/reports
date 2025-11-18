@@ -87,3 +87,15 @@ export const requireAuth = (req: Request, res: Response, next: NextFunction) => 
         return res.status(403).json({ error: "Invalid or expired token" });
     }
 };
+
+export const getUsernameFromToken = (req: Request): string | null => {
+    const header = req.headers.authorization;
+    if (!header) return null;
+    const token = header.split(" ")[1];
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
+        return decoded;
+    } catch {
+        return null;
+    }
+};

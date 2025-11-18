@@ -1,9 +1,9 @@
 import dotenv from 'dotenv';
-dotenv.config();
-
 import { Worker } from 'node:worker_threads';
 import { getRedisClient } from './services/redis.js';
 import { getRabbitChannel } from './services/rabbit.js';
+
+dotenv.config();
 
 const MAX_THREADS = parseInt(process.env.MAX_THREADS || '3', 10);
 const MAX_RETRIES = parseInt(process.env.MAX_RETRIES || '3', 10);

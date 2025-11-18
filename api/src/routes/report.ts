@@ -3,10 +3,10 @@ import multer from 'multer';
 import { getRabbitChannel } from '../services/rabbit.js';
 import { getRedisClient } from '../services/redis.js';
 import { randomUUID } from 'crypto';
-import { requireAuth } from '../utils/authentication.js';
+import { requireAuth, getUsernameFromToken } from '../utils/authentication.js';
 
 const router = Router();
-const upload = multer({ limits: { fileSize: 1 * 1024 * 1024 }});
+const upload = multer({ limits: { fileSize: 1 * 1024 * 1024 } });
 
 router.post('/upload', requireAuth, upload.single('report'), async (req, res) => {
     try {
@@ -17,11 +17,12 @@ router.post('/upload', requireAuth, upload.single('report'), async (req, res) =>
             return res.status(400).json({ error: 'File is empty' });
 
         const jobId = randomUUID();
+        const username = getUsernameFromToken(req);
         const channel = await getRabbitChannel();
 
         const payload = {
             jobId,
-            user: req.user?.username,
+            user: username,
             createdAt: new Date().toISOString(),
             text
         };
@@ -37,7 +38,10 @@ router.post('/upload', requireAuth, upload.single('report'), async (req, res) =>
 });
 
 router.get('/:id', requireAuth, async (req, res) => {
+    const username = getUsernameFromToken(req);
+    console.log(`username: ${username}`);
     const jobId = req.params.id;
+
     const redis = await getRedisClient();
     const result = await redis.hGetAll(jobId);
 
